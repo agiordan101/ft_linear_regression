@@ -32,23 +32,23 @@ print("Price : ", price)
 print("Weights : ", weights[0], " / ", weights[1])
 print("Learning rate : ", lr)
 
+
 #Compute new weights
-errorW0 = 0
-for i in range(len(km)):
-	errorW0 += (predict(km[i]) - price[i]) * km[i]
-errorW0 /= len(km)
+for j in range(0, 10):
+	errorW0 = 0
+	errorW1 = 0
+	for i in range(len(km)):
+		errorW0 += (predict(km[i]) - price[i]) * km[i]
+		errorW1 += (predict(km[i]) - price[i]) * 1
+	errorW0 /= len(km)
+	errorW1 /= len(km)
 
-errorW1 = 0
-for i in range(len(km)):
-	errorW1 += (predict(km[i]) - price[i]) * 1
-errorW1 /= len(km)
+	print("Errors : ", errorW0, " / ", errorW1)
 
-print("Errors : ", errorW0, " / ", errorW1)
+	weights[0] = weights[0] - lr * errorW0
+	weights[1] = weights[1] - lr * errorW1
 
-w0 = weights[0] - lr * errorW0
-w1 = weights[1] - lr * errorW1
-
-print("New weights : ", w0, " / ", w1)
+	print("New weights : ", weights[0], " / ", weights[1])
 
 #Write new weights
 """
