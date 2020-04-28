@@ -25,7 +25,7 @@ for i in lines:
 	price.append(float(line[1]))
 
 #lr = float(input("Enter a learning rate (default: 1) : "))
-lr = 1
+lr = 0.0000001
 
 print("Km :", km)
 print("Price : ", price)
