@@ -1,9 +1,14 @@
+from plotly.offline import plot
+import plotly.graph_objs as plgraph
+import numpy as np
+x = np.arange(250000)
+
 #Function to predict price with mileage
 def	predict(mileage):
 	return weights[0] * mileage + weights[1]
 
 #Read data
-weights_file = open("weights", "r")
+weights_file = open("weights.txt", "r")
 weights = weights_file.read().split('\n')
 weights_file.close()
 
@@ -25,35 +30,42 @@ for i in lines:
 	price.append(float(line[1]))
 
 #lr = float(input("Enter a learning rate (default: 1) : "))
-lr = 0.0000001
+lr0 = 0.0000000001
+lr1 = 0.1
 
+print("Actual weights : ", weights[0], " / ", weights[1])
+print("Data set :\n")
 print("Km :", km)
 print("Price : ", price)
-print("Weights : ", weights[0], " / ", weights[1])
-print("Learning rate : ", lr)
+#print("Learning rate : ", lr)
 
+#fig = plgraph.Figure(data=plgraph.Scatter(x=x, y=weights[0] * x + weights[1]))
+#fig.add_trace(plgraph.Scatter(x=km, y=price, mode='markers', name='markers'))
+fig = plgraph.Figure()
+fig.add_scatter(x=km, y=price, mode='markers', name='markers')
 
 #Compute new weights
-for j in range(0, 10):
-	errorW0 = 0
-	errorW1 = 0
+for k in range(1000):
+	deltaWeight0 = 0
+	deltaWeight1 = 0
 	for i in range(len(km)):
-		errorW0 += (predict(km[i]) - price[i]) * km[i]
-		errorW1 += (predict(km[i]) - price[i]) * 1
-	errorW0 /= len(km)
-	errorW1 /= len(km)
+		error = price[i] - predict(km[i])
+		deltaWeight0 += error * km[i];
+		deltaWeight1 += error * 1;
+	deltaWeight0 /= len(km)
+	deltaWeight1 /= len(km)
+	weights[0] += lr0 * deltaWeight0
+	weights[1] += lr1 * deltaWeight1
+	#fig.update_traces(patch=dict(x=x, y=weights[0] * x + weights[1]), selector=dict(type="scatter", mode="lines"))
 
-	print("Errors : ", errorW0, " / ", errorW1)
+fig.add_scatter(x=x, y=weights[0] * x + weights[1])
+plot(fig)
 
-	weights[0] = weights[0] - lr * errorW0
-	weights[1] = weights[1] - lr * errorW1
-
-	print("New weights : ", weights[0], " / ", weights[1])
+print("\nNew weights : ", weights[0], " / ", weights[1])
 
 #Write new weights
-"""
-weights_file = open("weights", "w")
-weights_file.write(str(w0) + "\n")
-weights_file.write(str(w1) + "\n")
+weights_file = open("weights.txt", "w")
+weights_file.write(str(weights[0]) + "\n")
+weights_file.write(str(weights[1]) + "\n")
 weights_file.close()
-"""
+
