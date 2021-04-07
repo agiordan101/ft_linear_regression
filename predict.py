@@ -1,5 +1,5 @@
-weights_file = open("weights", "r")
-weights = weights_file.read().split('\n')
+weights_file = open("weights.txt", "r")
+weights = weights_file.read().split('\n')[:-1]
 print("Weights :", weights)
 
 mileage = float(input("Enter a mileage : "))
